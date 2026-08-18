@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: transaction-platform
+  datasource:
+    hikari:
+      # Sized for this app's expected concurrency, not left at Hikari's default of 10
+      # without comment: a modular monolith on modest hardware doesn't need a large
+      # pool, and an oversized pool just contends harder on the DB side under load.
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      pool-name: platform-hikari
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    schemas: users,auth,accounts,transactions,audit,notifications,ledger,risk,public
+    default-schema: public
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: 8080
+  error:
+    include-message: always
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus,info
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+platform:
+  jwt:
+    access-token-ttl-minutes: 15
+    refresh-token-ttl-days: 7
+    private-key-path: ${JWT_PRIVATE_KEY_PATH:classpath:keys/private_key.pem}
+    public-key-path: ${JWT_PUBLIC_KEY_PATH:classpath:keys/public_key.pem}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

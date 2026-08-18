@@ -1,0 +1,11 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+platform:
+  jwt:
+    private-key-path: classpath:keys/private_key.pem
+    public-key-path: classpath:keys/public_key.pem
+    access-token-ttl-minutes: 15
+    refresh-token-ttl-days: 7

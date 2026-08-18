@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/platform
+    username: ${DB_USERNAME:platform}
+    password: ${DB_PASSWORD:platform}
+  data:
+    redis:
+      host: redis
+      port: 6379
+  mail:
+    host: mailhog
+    port: 1025
+
+platform:
+  jwt:
+    private-key-path: file:/app/keys/private_key.pem
+    public-key-path: file:/app/keys/public_key.pem
