@@ -4,16 +4,13 @@ import com.platform.users.domain.RoleName;
 import com.platform.users.domain.User;
 import com.platform.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * Lets an employee find a customer to act on (e.g. open an account for them).
- * Deliberately scoped to CUSTOMER-role users only - an employee opening an
- * account has no legitimate reason to search for other employees or admins.
- */
 @Service
 @RequiredArgsConstructor
 public class CustomerDirectoryService {
@@ -23,5 +20,10 @@ public class CustomerDirectoryService {
     @Transactional(readOnly = true)
     public List<User> searchCustomers(String search) {
         return userRepository.searchByRole(RoleName.CUSTOMER, search);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<User> searchCustomersPaged(String search, Pageable pageable) {
+        return userRepository.searchByRolePaged(RoleName.CUSTOMER, search, pageable);
     }
 }

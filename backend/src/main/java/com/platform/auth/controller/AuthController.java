@@ -29,12 +29,6 @@ public class AuthController {
     private final UserMapper userMapper;
     private final JwtService jwtService;
 
-    @PostMapping("/register")
-    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request) {
-        authService.register(request.email(), request.password(), request.firstName(), request.lastName());
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthService.LoginResult result = authService.login(request.email(), request.password());

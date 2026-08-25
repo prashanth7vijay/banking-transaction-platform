@@ -3,7 +3,6 @@ import { AppLayout } from '@/app/AppLayout';
 import { HealthCheckPage } from '@/routes/HealthCheckPage';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
-import { RegisterPage } from '@/features/auth/pages/RegisterPage';
 import { ForgotPasswordPage } from '@/features/auth/pages/ForgotPasswordPage';
 import { ResetPasswordPage } from '@/features/auth/pages/ResetPasswordPage';
 import { ProfilePage } from '@/features/users/pages/ProfilePage';
@@ -23,7 +22,6 @@ import { CustomerDetailPage } from '@/features/customer360/pages/CustomerDetailP
 import { AuditDashboardPage } from '@/features/audit/pages/AuditDashboardPage';
 import { AdminOverviewPage } from '@/features/admin/pages/AdminOverviewPage';
 import { UserManagementPage } from '@/features/admin/pages/UserManagementPage';
-import { ManageAccountsPage } from '@/features/employee/pages/ManageAccountsPage';
 
 export default function App() {
   return (
@@ -31,7 +29,6 @@ export default function App() {
       <Route element={<AppLayout />}>
         <Route path="/" element={<HealthCheckPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
 
@@ -51,7 +48,6 @@ export default function App() {
         <Route element={<ProtectedRoute roles={['EMPLOYEE']} />}>
           <Route path="/command-center" element={<CommandCenterPage />} />
           <Route path="/approvals" element={<ApprovalQueuePage />} />
-          <Route path="/employee/accounts" element={<ManageAccountsPage />} />
           <Route path="/exceptions" element={<ExceptionQueuePage />} />
           <Route path="/exceptions/:id" element={<ExceptionDetailPage />} />
           <Route path="/transactions/by-status" element={<TransactionsByStatusPage />} />

@@ -37,25 +37,40 @@ export function LoginPage() {
   };
 
   return (
-    <div className="max-w-sm mx-auto">
-      <h1 className="text-2xl font-semibold mb-6">Log in</h1>
-      {serverError && <Alert>{serverError}</Alert>}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <Input placeholder="Email" type="email" {...register('email')} />
-          {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>}
+    <div className="min-h-[calc(100vh-73px)] flex items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-semibold">Welcome back</h1>
+          <p className="text-sm text-muted-foreground mt-1">Log in to your account to continue.</p>
         </div>
-        <div>
-          <Input placeholder="Password" type="password" {...register('password')} />
-          {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>}
+
+        <div className="border border-border rounded-xl p-6 shadow-sm bg-background">
+          {serverError && <Alert>{serverError}</Alert>}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <label htmlFor="email" className="block text-xs font-medium text-muted-foreground mb-1.5">
+                Email
+              </label>
+              <Input id="email" type="email" autoComplete="email" {...register('email')} />
+              {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>}
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor="password" className="block text-xs font-medium text-muted-foreground">
+                  Password
+                </label>
+                <Link to="/forgot-password" className="text-xs text-muted-foreground hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
+              <Input id="password" type="password" autoComplete="current-password" {...register('password')} />
+              {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>}
+            </div>
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? 'Logging in...' : 'Log in'}
+            </Button>
+          </form>
         </div>
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? 'Logging in...' : 'Log in'}
-        </Button>
-      </form>
-      <div className="flex justify-between mt-4 text-sm text-muted-foreground">
-        <Link to="/forgot-password" className="hover:underline">Forgot password?</Link>
-        <Link to="/register" className="hover:underline">Create account</Link>
       </div>
     </div>
   );

@@ -11,18 +11,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Phase 3 scope: only GLOBAL-scoped policies are evaluated - ACCOUNT_TYPE/
- * CUSTOMER/ACCOUNT scope resolution (most-specific-wins) is deferred to a later
- * phase. The schema already supports those scopes so no migration will be
- * needed when that resolution is added; this phase just doesn't query for them
- * yet, to keep the first cut simple and reviewable.
- * <p>
- * A CRITICAL result with a hard-block rule is what actually stops a transfer
- * (blocked=true); MEDIUM/HIGH results still route through - which approval
- * policy that routes to is a later phase's concern (multi-level approvals),
- * not this one.
- */
+
 @Service
 @RequiredArgsConstructor
 public class RuleBasedRiskStrategy implements RiskStrategy {

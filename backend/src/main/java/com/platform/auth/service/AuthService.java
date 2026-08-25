@@ -95,13 +95,12 @@ public class AuthService {
     }
 
     public void forgotPassword(String email) {
-        // Deliberately do not reveal whether the email exists - always behave the same.
         try {
             User user = userService.getByEmail(email);
             String token = passwordResetTokenService.issue(user.getEmail());
             sendResetEmail(user.getEmail(), token);
         } catch (Exception ignored) {
-            // swallow - do not leak account existence via timing/error differences beyond this try/catch
+            
         }
     }
 

@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getAccount } from '@/features/accounts/api/accountsApi';
 import { formatCurrency } from '@/shared/lib/format';
+import { Button } from '@/shared/components/ui/Button';
 
 export function AccountDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { data: account, isLoading, isError } = useQuery({
     queryKey: ['accounts', id],
     queryFn: () => getAccount(id!),
@@ -28,9 +30,10 @@ export function AccountDetailPage() {
         <p className="text-xs text-muted-foreground mt-3">Status: {account.status}</p>
       </div>
 
-      <p className="text-sm text-muted-foreground mt-6">
-        Transfers and transaction history arrive in Phase 3.
-      </p>
+      <div className="flex gap-3 mt-6">
+        <Button onClick={() => navigate('/transfer')}>Send a Transfer</Button>
+        <Button variant="outline" onClick={() => navigate('/transactions')}>View Transaction History</Button>
+      </div>
     </div>
   );
 }

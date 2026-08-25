@@ -269,3 +269,18 @@ The last of the five features, and it closes an important architectural loop: it
 ## Product Enhancement Phase — all five features complete
 
 Transaction 360 → Exception & Investigation Management → Approval Workbench + SLA → Operations Command Center → Customer 360, in that order, each one reusing what the last one built rather than duplicating it. The full "why did this happen, what needs attention, and what's the customer's whole picture" loop the product brief asked for is now real, backed by actual data end to end, with every simplification and architectural tradeoff flagged in this changelog rather than left silent.
+
+---
+
+## UX/Onboarding Correction Pass
+
+A real banking platform has no public self-service sign-up - a customer's account is opened by an employee, not created by a stranger typing into a form. The app didn't reflect that. This pass fixed it, plus cleaned up leftover placeholder copy and a flat, unstyled header that had gone unaddressed for too long.
+
+- **Public registration removed entirely.** `POST /auth/register` no longer exists as a reachable endpoint - `AuthService.register()` is kept only because `AuthServiceTest` covers it, not because anything calls it in production. The `/register` route, `RegisterPage`, and every reference to it are gone from the frontend.
+- **The only way a customer account now comes into existence:** `POST /api/v1/employee/customers` (EMPLOYEE-only) creates the login, immediately followed by the existing `POST /api/v1/employee/accounts` to open their first account with an opening balance - both driven from one "Add Customer" form on the rebuilt Customers page. The employee sets the customer's initial password directly, handed over out of band, same as real retail bank onboarding.
+- **`ManageAccountsPage` removed** - its one real capability (open an account for an existing customer) is still there via the same `openAccount` call, just folded into the Customers page instead of living on its own separate, redundant screen.
+- **Customers page rebuilt**: paginated, debounced search (reusing the same `PageResponse<T>` pattern the audit log already used) instead of an unpaginated flat list, plus the Add Customer flow above. A partial-failure state (customer created, account-opening failed) is shown honestly rather than hidden - the fix path is real, not glossed over.
+- **The "Eli · EMPLOYEE" plain-text header replaced** with an actual `UserMenu` component - avatar, dropdown with name/email/role badges, Profile link, Log out - and the nav bar itself now uses active-route highlighting instead of plain underlined text links.
+- **Two stale placeholder lines removed:** the account detail page's "Transfers and transaction history arrive in Phase 3" (Phase 3 has been done for a long time; replaced with real, working Transfer/History buttons) and the root landing page's "Login, dashboard, and feature routes arrive in Phase 1" (the root page was a bare health-check readout; it's now a proper welcome screen that auto-redirects a logged-in user straight to their role's home page).
+
+**Exit criteria met:** no path to a customer creating their own login exists anywhere in the app; every screen an employee or customer lands on says something true about the system's current state, not about a phase that's long since shipped.
