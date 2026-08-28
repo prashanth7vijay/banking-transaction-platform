@@ -77,7 +77,11 @@ class ApprovalServiceTest {
         pendingTransaction.setInitiatedByUserId(customerId);
         pendingTransaction.setStatus(TransactionStatus.PENDING_APPROVAL);
 
-        when(transactionRepository.save(any(Transaction.class))).thenAnswer(inv -> inv.getArgument(0));
+        // Same reasoning as the compareAndSetStatus stub above: three tests below
+        // throw before the approve/reject code path ever reaches a save() call
+        // (self-approval and already-decided checks both fail fast), so this stub
+        // is legitimately unused in those cases - lenient() says that's fine.
+        lenient().when(transactionRepository.save(any(Transaction.class))).thenAnswer(inv -> inv.getArgument(0));
     }
 
     @Test
