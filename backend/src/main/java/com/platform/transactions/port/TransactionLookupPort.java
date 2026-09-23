@@ -15,11 +15,26 @@ public interface TransactionLookupPort {
     TransactionSummary getById(UUID transactionId);
 
     /**
-     * A customer's transfers since a given point in time, most recent first -
-     * for Customer 360's transaction activity section (recent transactions plus
-     * the raw material to compute 30-day volume/value/averages in Java, same
-     * "computed in Java over demo-scale result sets" approach as
-     * TransactionMetricsPortImpl/ExceptionMetricsPortImpl).
+     * A customer's most recent transfers since a given point in time, limited
+     * to {@code limit} rows and ordered most-recent-first - DB-side limited,
+     * for Customer 360's recent-transactions and timeline sections, which only
+     * ever display a small, fixed number of rows regardless of how much
+     * history the customer has.
      */
-    List<TransactionSummary> listForCustomerSince(UUID customerUserId, Instant since);
+    List<TransactionSummary> findRecentForCustomer(UUID customerUserId, Instant since, int limit);
+
+    /**
+     * Id-only view of a customer's transactions since a given point in time,
+     * most recent first. Used to scope batched risk-assessment/exception
+     * lookups to "this customer's transactions in this window" without
+     * loading full transaction rows just to read their ids.
+     */
+    List<UUID> findTransactionIdsForCustomerSince(UUID customerUserId, Instant since);
+
+    /**
+     * Count/sum/30-day-sub-total/status-count numbers for a customer's
+     * transaction window, computed by the database rather than by loading the
+     * window's rows into the JVM. See {@link TransactionActivityAggregate}.
+     */
+    TransactionActivityAggregate getActivityAggregate(UUID customerUserId, Instant since90, Instant since30);
 }

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +15,23 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
+
+    /**
+     * Batch name resolution for display purposes (e.g. Customer 360's exception
+     * assignee names). Deliberately projects only id + firstName instead of
+     * returning {@code User} - callers here never need roles, email, or any
+     * other field, and {@code User.roles} is an EAGER @ManyToMany that would
+     * otherwise pull in a secondary per-user query for no reason. One IN-clause
+     * query for however many ids are passed, instead of one {@code findById}
+     * per id.
+     */
+    @Query("SELECT u.id AS id, u.firstName AS firstName FROM User u WHERE u.id IN :ids")
+    List<UserIdName> findFirstNamesByIdIn(@Param("ids") Collection<UUID> ids);
+
+    interface UserIdName {
+        UUID getId();
+        String getFirstName();
+    }
 
     @Query("""
             SELECT u FROM User u

@@ -17,9 +17,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,11 +75,25 @@ public class RiskAssessmentService implements RiskAssessmentPort {
     @Transactional(readOnly = true)
     public Optional<RiskAssessmentSummary> getAssessment(UUID transactionId) {
         return riskAssessmentRepository.findByTransactionId(transactionId)
-                .map(a -> new RiskAssessmentSummary(
-                        a.getRiskLevel().name(),
-                        deserializeReasons(a.getReasons()),
-                        a.isBlocked(),
-                        a.getAssessedAt()));
+                .map(this::toSummary);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<UUID, RiskAssessmentSummary> getAssessments(Collection<UUID> transactionIds) {
+        if (transactionIds.isEmpty()) {
+            return Map.of();
+        }
+        return riskAssessmentRepository.findByTransactionIdIn(transactionIds).stream()
+                .collect(Collectors.toMap(RiskAssessment::getTransactionId, this::toSummary));
+    }
+
+    private RiskAssessmentSummary toSummary(RiskAssessment a) {
+        return new RiskAssessmentSummary(
+                a.getRiskLevel().name(),
+                deserializeReasons(a.getReasons()),
+                a.isBlocked(),
+                a.getAssessedAt());
     }
 
     private List<String> deserializeReasons(String json) {

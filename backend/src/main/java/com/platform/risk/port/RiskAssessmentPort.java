@@ -3,6 +3,8 @@ package com.platform.risk.port;
 import com.platform.risk.service.RiskAssessmentResult;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,4 +29,12 @@ public interface RiskAssessmentPort {
      * replacement.
      */
     Optional<RiskAssessmentSummary> getAssessment(UUID transactionId);
+
+    /**
+     * Batch version of {@link #getAssessment}, keyed by transaction id, for
+     * callers (Customer 360) that need the assessment for a whole set of
+     * transactions at once. Ids with no assessment are simply absent from the
+     * map. One query regardless of how many ids are passed.
+     */
+    Map<UUID, RiskAssessmentSummary> getAssessments(Collection<UUID> transactionIds);
 }

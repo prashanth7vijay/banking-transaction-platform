@@ -1,0 +1,24 @@
+spring:
+  config:
+    activate:
+      on-profile: benchmark
+  jpa:
+    properties:
+      hibernate:
+        generate_statistics: true
+    open-in-view: false
+
+logging:
+  level:
+    com.platform.customer360.benchmark: INFO
+    org.hibernate.stat: INFO
+
+benchmark:
+  seed-data: false
+  dataset-size: SMALL
+  seed: 42
+  target-customer-id: ""
+  warmup-iterations: 20
+  iterations: 200
+  label: "unlabeled"
+  output-file: "performance/result.json"

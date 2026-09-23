@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -26,5 +28,15 @@ public class UserLookupPortImpl implements UserLookupPort {
         var roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
         return new UserSummary(user.getId(), user.getEmail(), user.getFirstName(), user.getLastName(),
                 user.getStatus().name(), user.getCreatedAt(), roles);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<UUID, String> getFirstNamesByIds(Collection<UUID> userIds) {
+        if (userIds.isEmpty()) {
+            return Map.of();
+        }
+        return userRepository.findFirstNamesByIdIn(userIds).stream()
+                .collect(Collectors.toMap(UserRepository.UserIdName::getId, UserRepository.UserIdName::getFirstName));
     }
 }

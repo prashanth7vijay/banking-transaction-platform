@@ -30,7 +30,10 @@ public class EmployeeCustomerController {
 
     @GetMapping(params = "!page")
     public List<UserResponse> search(@RequestParam(required = false) String search) {
-        return customerDirectoryService.searchCustomers(search).stream().map(userMapper::toResponse).toList();
+        return customerDirectoryService.searchCustomers(search)
+                .stream()
+                .map(userMapper::toResponse)
+                .toList();
     }
 
     @GetMapping(params = "page")
@@ -41,15 +44,28 @@ public class EmployeeCustomerController {
     ) {
         int safeSize = Math.min(Math.max(size, 1), MAX_PAGE_SIZE);
         int safePage = Math.max(page, 0);
+
         return PageResponse.from(
-                customerDirectoryService.searchCustomersPaged(search, PageRequest.of(safePage, safeSize))
-                        .map(userMapper::toResponse)
+                customerDirectoryService.searchCustomersPaged(
+                        search,
+                        PageRequest.of(safePage, safeSize)
+                ).map(userMapper::toResponse)
         );
     }
 
     @PostMapping
-    public ResponseEntity<UserResponse> create(@Valid @RequestBody CreateCustomerRequest request) {
-        var customer = userService.createCustomer(request.email(), request.password(), request.firstName(), request.lastName());
-        return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toResponse(customer));
+    public ResponseEntity<UserResponse> create(
+            @Valid @RequestBody CreateCustomerRequest request
+    ) {
+        var customer = userService.createCustomer(
+                request.email(),
+                request.password(),
+                request.firstName(),
+                request.lastName()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(userMapper.toResponse(customer));
     }
 }

@@ -24,6 +24,10 @@ public class CustomerDirectoryService {
 
     @Transactional(readOnly = true)
     public Page<User> searchCustomersPaged(String search, Pageable pageable) {
-        return userRepository.searchByRolePaged(RoleName.CUSTOMER, search, pageable);
+        return userRepository.searchByRolePaged(
+                RoleName.CUSTOMER,
+                search,
+                pageable
+        );
     }
 }
